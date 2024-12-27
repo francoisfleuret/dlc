@@ -1,0 +1,269 @@
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{upquote}
+\usepackage{anyfontsize}
+\usepackage[round]{natbib}
+\usepackage{fancyvrb}
+\usepackage{mathtools}
+\usepackage{etex}
+\usepackage{xparse}
+\usepackage{xifthen}
+%% \usepackage{BOONDOX-cal}
+
+\def\theurl{\url{https://fleuret.org/dlc/}}
+\def\theauthor{Fran\c cois Fleuret}
+\def\coursetitle{Deep learning}
+
+\makeatletter
+\DeclareFontEncoding{LS1}{}{}
+\DeclareFontSubstitution{LS1}{stix}{m}{n}
+\DeclareMathAlphabet{\mathcal}{LS1}{stixscr}{m}{n}
+\makeatother
+
+\def\relu{\operatorname{ReLU}}
+\def\softmax{\operatorname{softmax}}
+\def\sigmoid{\operatorname{sigm}}
+\def\sample{\operatorname{sample}}
+\def\diag{\operatorname{diag}}
+\def\sign{\operatorname{sign}}
+\def\argmax{\operatornamewithlimits{argmax}}
+\def\argmin{\operatornamewithlimits{argmin}}
+\def\trace{\operatorname{Tr}}
+
+% Olivier: I changed {\it #1} to \textit{#1} because there are
+% different and does not mess up with serif/sansserif
+%
+% https://tex.stackexchange.com/questions/8053/is-there-a-difference-between-textit-and-itshape
+\newcommand{\latin}[1]{\textit{#1}}
+% \newcommand{\latin}[1]{{\it #1}}
+
+\newcommand{\materialsurl}[1]{\url{https://fleuret.org/dlc/#1}}
+
+\newcommand{\DATAVAR}{\mathbf{{\cal D}}}
+\newcommand{\DATAVAL}{\mathbf{d}}
+\newcommand{\BD}{\mathbf{D}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\Ll}{\mathcal{l}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\Lh}{\mathcal{h}}
+\newcommand{\transpose}{^{\top}}
+
+\newcommand{\dd}[2]{\frac{\partial {#1}}{\partial {#2}}}
+%%\newcommand{\jacob}[2]{\left[ \dd{#1}{{#2}} \right]}
+\newcommand{\gradient}[2]{\left[ \dd{#1}{{#2}} \right]}
+%% \newcommand{\jacob}[2]{\mathbf{J}_{#1}}
+\newcommand{\DD}[2]{\left[ \frac{\partial {#1}}{\partial {#2}} \right]}
+\newcommand{\lbb}{\left[\!\!\left[}
+\newcommand{\rbb}{\right]\!\!\right]}
+
+\newcommand{\parname}[1]{{(#1)}}
+\newcommand{\naming}[1]{{\text{(#1)}}}
+
+%% \newcommand{\parname}[1]{{\vec{#1}}}
+%% \newcommand{\parname}[1]{{\widetilde{#1}}}
+%% \newcommand{\parname}[1]{{\tilde{#1}}}
+%% \newcommand{\parname}[1]{{(#1)}}
+
+%% \DeclareMathOperator*{\expect}{\mathds{E}}
+%% \DeclareMathOperator*{\variance}{\mathds{V}}
+%% \DeclareMathOperator*{\empexpect}{\hat{\mathds{E}}}
+%% \DeclareMathOperator*{\mutinf}{\mathds{I}}
+%% \DeclareMathOperator*{\empmutinf}{\hat{\mathds{I}}}
+%% \DeclareMathOperator*{\entropy}{\mathds{H}}
+%% \DeclareMathOperator*{\empentropy}{\hat{\mathds{H}}}
+
+\def\given{\,\middle\vert\,}
+\newcommand{\proba}{{P}}
+\newcommand{\seq}{{S}}
+%% \newcommand{\proba}{\mathds{P}}
+\newcommand{\expect}{\mathds{E}}
+\newcommand{\variance}{\mathds{V}}
+\newcommand{\empexpect}{\hat{\mathds{E}}}
+\newcommand{\mutinf}{\mathds{I}}
+\newcommand{\empmutinf}{\hat{\mathds{I}}}
+\newcommand{\entropy}{\mathds{H}}
+\newcommand{\empentropy}{\hat{\mathds{H}}}
+\newcommand{\ganG}{\mathbf{G}}
+\newcommand{\ganD}{\mathbf{D}}
+\newcommand{\ganF}{\mathbf{F}}
+
+\newcommand{\dkl}{\mathds{D}_{\mathsf{KL}}}
+\newcommand{\djs}{\mathds{D}_{\mathsf{JS}}}
+
+\newcommand*{\vertbar}{\rule[-1ex]{0.5pt}{2.5ex}}
+\newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+
+\usepackage{xcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Colors
+
+\definecolor{blue}{rgb}{0.0,0.0,0.55}
+\definecolor{paleblue}{rgb}{0.50,0.50,1.00}
+\definecolor{darkblue}{rgb}{0.10,0.10,0.70}
+
+\definecolor{red}{rgb}{1.0,0.0,0.0}
+\definecolor{palered}{rgb}{1.00,0.50,0.50}
+\definecolor{darkred}{rgb}{0.75,0.0,0.0}
+
+\definecolor{green}{rgb}{0.0,0.50,0.0}
+\definecolor{palegreen}{rgb}{0.5,1.00,0.5}
+\definecolor{darkgreen}{rgb}{0.0,0.5,0.0}
+
+\definecolor{dimmed}{rgb}{0.8,0.8,0.8}
+
+\definecolor{orange}{rgb}{1.0,0.6,0.0}
+\definecolor{bluegray}{rgb}{0.1,0.2,0.7}
+
+\newcommand{\blue}{\color{blue}}
+\newcommand{\darkblue}{\color{darkblue}}
+\newcommand{\paleblue}{\color{paleblue}}
+\newcommand{\green}{\color{green}}
+\newcommand{\darkgreen}{\color{darkgreen}}
+\newcommand{\palegreen}{\color{palegreen}}
+\newcommand{\red}{\color{red}}
+\newcommand{\darkred}{\color{darkred}}
+\newcommand{\palered}{\color{palered}}
+\newcommand{\black}{\color{black}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\quotepaper}[2]{%
+\begin{center}%
+%
+\begin{minipage}{0.95\textwidth}
+``#2''
+\end{minipage}%
+%
+\end{center}
+
+\vspace*{-1ex}
+
+\acksource{\citep{#1}}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\quotesource}[2]{%
+\begin{center}%
+%
+\begin{minipage}{0.95\textwidth}
+``#2''
+\end{minipage}%
+%
+\end{center}
+
+\vspace*{-1ex}
+
+\acksource{#1}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{codecolor}{rgb}{0.0,0.0,0.0}
+\definecolor{codecolor2}{rgb}{0.0,0.0,0.0}
+
+%% One keyword. The heavy magic to allow the percent symbol
+%% \makeatletter
+%% \newcommand{\kw}{\catcode`\%=12\@kw}
+%% \DeclareRobustCommand{\@kw}[1]{{{\color{codecolor}\tt \detokenize{#1}}\catcode`\%=14}{}}
+%% \makeatother
+\DeclareRobustCommand{\kw}[1]{{\color{codecolor}\tt \detokenize{#1}}}
+
+%% Inline piece of code
+
+\DefineVerbatimEnvironment{rawsrc}{BVerbatim}{fontsize=\small,baselinestretch=1.0,formatcom=\color{codecolor}}
+
+%% Sub-part of a file
+
+\ifnum\pdfshellescape=1
+\NewDocumentCommand{\rawsrcexcerpt}{mmmO{}O{1}}{%
+  \BVerbatimInput[fontsize=\small,baselinestretch=1.0,formatcom=\color{codecolor},#4]{|"< #1 awk '/#2/{flag=1;next}/#3/{flag=0}flag {print substr($0, #5)}' | grep -v HIDE_IN_SLIDE"}%
+}
+\else
+\NewDocumentCommand{\rawsrcexcerpt}{mmmO{}O{1}}{%
+  {\color{darkred} \tt Source snippet omitted because shell escape is disabled.}%
+}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{warning}{%
+\raisebox{-8pt}{%
+\begin{tikzpicture}[scale=0.6]
+\node at (0, 0) {\huge\textrm{\textbf{!}}};
+\draw[rounded corners=1pt,line width=1.5pt,darkred] (-0.6, -0.47) -- ++(1.2, 0) -- ++(-0.6, 1.2) -- cycle;
+\end{tikzpicture}%
+}%
+%% {\darkred \huge {\fontencoding{U}\fontfamily{futs}\selectfont\char 66\relax}}%
+%
+\hspace*{0.75em}%
+%
+\begin{minipage}{0.9\textwidth}
+}{%
+\end{minipage}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\fixedheightbox}[2]{%
+   \sbox{0}{\parbox{\textwidth}{#2}}
+    \ifdim\dimexpr\ht0+\dp0<#1
+    \dp0\dimexpr#1-\ht0\fi
+    \usebox{0}%
+}
+
+\makeatletter
+\newcommand{\smallerthantiny}{\@setfontsize{\smallerthantiny}{4pt}{5pt}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% The \draft command
+
+\newcounter{nbdrafts}
+\setcounter{nbdrafts}{0}
+\makeatletter
+\newcommand{\checknbdrafts}{
+\ifnum \thenbdrafts > 0
+\@latex@warning@no@line{**********************************************************************}
+\@latex@warning@no@line{* The document contains \thenbdrafts \space draft note(s)}
+\@latex@warning@no@line{**********************************************************************}
+\fi}
+\newcommand{\draft}[1]{\addtocounter{nbdrafts}{1}{\color{red} #1}}
+\makeatother
+
+\newcommand{\vstretch}{\vspace*{\stretch{1}}}
+\newcommand{\hstretch}{\hspace*{\stretch{1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Across files references, e.g. \dlclabel{autograd} in the slide file
+% about autograd, and \dlcref{autograd} where we want to refer to it
+
+\newcommand{\dlclabel}[1]{%
+\newwrite\file
+\immediate\openout\file=#1.dlcref
+%% \immediate\write\file{\dlclecturenumber.\dlcdecknumber.\,``\detokenize\expandafter{\dlcdecktitle}''}
+%\immediate\write\file{\dlclecturenumber.\dlcdecknumber.\detokenize\expandafter{\,``\dlcdecktitle''}}
+\immediate\write\file{\dlclecturenumber.\dlcdecknumber. ``\dlcdecktitle''}
+\immediate\closeout\file
+}
+
+\newcommand{\dlcref}[1]{%
+\InputIfFileExists{#1.dlcref}{}{[dlcref #1 undefined]}\unskip
+%\@input{#1.dlcref}\unskip
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% To include a .pdf image which itself includes a raster image
+% relative to itself
+%
+% https://tex.stackexchange.com/a/282110
+\newcommand\inputpgf[2]{{
+\let\pgfimageWithoutPath\pgfimage
+\renewcommand{\pgfimage}[2][]{\pgfimageWithoutPath[##1]{#1/##2}}
+\input{#1/#2}
+}}

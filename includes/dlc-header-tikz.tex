@@ -1,0 +1,240 @@
+
+\usepackage{tikz}
+
+\usetikzlibrary{positioning,fit,backgrounds}
+\usetikzlibrary{arrows.meta,decorations.pathreplacing}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes,calc,intersections}
+\usetikzlibrary{patterns}
+%% \usetikzlibrary{shapes.multipart}
+
+\usetikzlibrary{arrows}
+%% \tikzset{>=angle 90}
+
+\definecolor{nn-data}   {rgb}{0.90, 0.95, 1.00}
+\definecolor{nn-param}  {rgb}{1.00, 0.90, 0.50}
+\definecolor{nn-process}{rgb}{0.80, 1.00, 0.80}
+
+\tikzset{
+  pics/box/.style args={#1/#2/#3/#4/#5/#6}{
+    code={
+      \pgfmathsetmacro{\slant}{0.35}
+      \pgfmathsetmacro{\width}{#1}
+      \pgfmathsetmacro{\height}{#2}
+      \pgfmathsetmacro{\thickness}{#3}
+      \pgfmathsetmacro{\lwidth}{#4}
+      \pgfmathsetmacro{\lheight}{#5}
+      \pgfmathsetmacro{\lthickness}{#6}
+      \pgfmathsetmacro{\labelgap}{0.15}
+
+      \pgfmathsetmacro{\centerx}{0}
+      \pgfmathsetmacro{\centery}{\height * 0.5 + \width * 0.5 * \slant}
+
+      % Filled body
+
+      \draw[fill] ( - \centerx, - \centery)
+      -- ++(0.0, \height)
+      -- ++(\slant * 0.5 * \width, 0.5 * \width)
+      -- ++(\thickness, 0.0)
+      -- ++(0, -\height)
+      -- ++(- \slant * 0.5 * \width, -0.5 * \width)
+      -- ++(-\thickness, 0)
+      ;
+
+      % Additional edges
+
+      \draw  ( - \centerx, - \centery) ++(0.0, \height)
+      -- ++(\thickness, 0.0) -- ++(\slant * 0.5 * \width, 0.5 * \width)
+      ;
+
+      \draw  ( - \centerx, - \centery) ++(\thickness, \height)
+      -- ++(0.0, -\height)
+      ;
+
+      % Axis length labels
+
+      \ifthenelse
+      {\equal{\lwidth}{}}{}
+      {
+        \draw[<->]  ( - \centerx, - \centery) ++(0.0, \height) ++(-\labelgap * .7071, \labelgap * .7071)
+        -- ++(\slant * 0.5 * \width, 0.5 * \width) node[midway, above left] {\scriptsize \lwidth};
+      }
+
+      \ifthenelse
+      {\equal{\lheight}{}}{}
+      {
+        \draw[<->]  ( - \centerx, - \centery) ++(-\labelgap, 0.0)
+        -- ++(0.0, \height) node[midway, left] {\scriptsize \lheight};
+      }
+
+      \ifthenelse
+      {\equal{\lthickness}{}}{}
+      {
+        \draw[<->]  ( - \centerx, - \centery) ++(0.0, -\labelgap)
+        -- ++(\thickness, 0.0) node[midway, below] {\scriptsize \lthickness};
+      }
+
+      % Anchor points
+
+      \coordinate (-center) at (\thickness + \slant * 0.25 * \width, 0.0);
+
+      \coordinate (-follow-tight) at (\thickness + 0.2, 0.0);
+
+      \coordinate (-follow-close) at (\thickness + \slant * 0.5 * \width, 0.0);
+
+      \coordinate (-follow) at (\thickness + \slant * 0.2 * \width + 1.0, 0.0);
+
+      \coordinate (-above-back)  at (-\centerx + \slant * 0.5 * \width + \thickness * 0.5, \height - \centery + 0.5 * \width + 0.3);
+
+      \coordinate (-above)  at (-\centerx + \thickness * 0.5, \height - \centery + 0.5 * \width + 0.3);
+
+      \coordinate (-below)  at (-\centerx + \thickness * 0.5, -\centery - 0.5);
+    }
+  },
+  pics/box/.default=0.5/1/1/1/1/1
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \newcommand{\intint}[1]{[\![#1]\!]}
+\newcommand{\intint}[1]{[\![#1]\!]}
+
+\newcommand{\cube}[6]{
+    \draw[#1,#2] #3 -- ++#4 -- ++#5 -- ++#6 -- ++($(0, 0) - #4$) -- ++($(0, 0) - #5$) -- ++($(0, 0) - #6$);
+    \draw[#1] #3 ++#4 -- ++#6 -- ++#5;
+    \draw[#1] #3 ++#6 -- ++#4;
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\oneconv}[3]{
+  \uncover<#1>{
+    \cube{draw=black,thick}{fill=black!15}{#3}{(0, 1)}{(0.4, 0.8)}{(1, 0)}
+  }
+
+  \uncover<#1-#2>{
+    \cube{draw=green,thick}{fill=white}{#3 ++(7.4, 0.4)}{(0, 0.6)}{(0.2, 0.4)}{(0.33333, 0)}
+  }
+}
+
+\newcommand{\onepool}[3]{
+  \uncover<#1>{
+    \cube{draw=black,thick}{fill=black!15}{#3}{(0, 1)}{(0.4, 0.8)}{(1, 0)}
+  }
+
+  \uncover<#1-#2>{
+    \cube{draw=green,thick}{fill=white}{#3 ++(7.4, 0.4)}{(0, 0.6)}{(0.2, 0.4)}{(0.33333, 0)}
+  }
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\drawvector}[1]{
+%% \raisebox{0.75cm}{\Large $\Bigg($}
+\begin{tikzpicture}[scale=0.2]
+  \draw[draw=none] (0, -4) -- (0, 4);
+  \edef\xdraw{0}
+  \draw[black!20,thin] (0, -0.2) -- ++(0, 0.4);
+  \foreach \y in { #1 }{
+    \pgfmathparse{\xdraw+1}
+    \xdef\xdraw{\pgfmathresult}
+    \draw[black!20,thin] (\xdraw, -0.2) -- ++(0, 0.4);
+  }
+  \draw[black!20,thin] (-0.1, 0) -- (\xdraw, 0) ++(0.1, 0);
+  \edef\xdraw{0}
+  \foreach \y in { #1 }{
+    \draw[] (\xdraw, 0) -- ++(0, \y) -- ++(1.0, 0.0) -- ++(0, -\y);
+    %% \draw[] (\xdraw, \y) -- ++(0.05, 0) -- ++(0.9, 0.0);
+    %% \draw[thick] (\xdraw,\y) +(0.05, 0) -- ++(0.9, 0.0);
+    \pgfmathparse{\xdraw+1}
+    \xdef\xdraw{\pgfmathresult}
+  }
+\end{tikzpicture}%
+%% \raisebox{0.75cm}{\Large $\Bigg)$}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A command to illustrate the convolutional layer output size
+
+\newcommand{\convscheme}[4]{
+\begin{tikzpicture}[scale=0.15]
+\draw (0, 0) -- (#1, 0);
+\draw[<->] (0, 1.75) -- ++(#1, 0) node[midway,above] {$#1$};
+
+\draw[fill=green!25] (#1, 0.00) ++(-#2, 0.0) rectangle ++(#2, 1.0);
+
+\foreach \x in { 1,...,#1 }
+  \draw[thin] (\x, 0.0) ++(-1, 0) rectangle ++(1, 1);
+
+\draw[] (0, 0.00) ++(0, -0.5) -- ++({#3*(#4-1)+1}, 0.0) node[midway,below] {$\times #4$};
+
+\foreach \x in { 1,...,#4 }
+  \draw[fill=black] ({#3*(\x-1)}, 0.5) ++(0.5, 0) circle(4pt);
+\end{tikzpicture}
+}
+
+\newcommand{\convtransposescheme}[4]{
+\begin{tikzpicture}[scale=0.15]
+\draw (0, 0) -- (#1, 0);
+
+\draw[fill=green!25] (#1, 0.00) ++(-#2, 0.0) rectangle ++(#2, 1.0);
+
+\foreach \x in { 1,...,#1 }
+  \draw[thin] (\x, 0.0) ++(-1, 0) rectangle ++(1, 1);
+
+\draw[] (0, 0.00) ++(0, 1.5) -- ++({#3*(#4-1)+1}, 0.0) node[midway,above] {$\times #4$};
+%% \draw[<->] (#1, 0.00) ++(-#2, -0.75) -- ++(#2, 0.0) node[midway,below] {$#2$};
+\draw[<->] (0, -0.75) -- ++(#1, 0.00) node[midway,below] {$#1$};
+
+\foreach \x in { 1,...,#4 }
+  \draw[fill=black] ({#3*(\x-1)}, 0.5) ++(0.5, 0) circle(4pt);
+\end{tikzpicture}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tikzset{>={Straight Barb[angle'=80,scale=1.1]}}
+
+\tikzset{
+  value/.style    ={ font=\scriptsize, rectangle, draw=black!50, fill=white,   thick,
+                     inner sep=3pt, inner xsep=2pt, minimum size=10pt, minimum height=20pt },
+  parameter/.style={ font=\scriptsize, rectangle, draw=black!50, fill=blue!15, thick,
+                     inner sep=0pt, inner xsep=2pt, minimum size=10pt, minimum height=20pt },
+  operation/.style={ font=\scriptsize, rectangle,    draw=black!50, fill=green!30, thick,
+                     inner sep=3pt, minimum size=10pt, minimum height=20pt },
+  flow/.style={->,shorten <= 1pt,shorten >= 1pt, draw=black!50, thick},
+%
+  f2f/.style={draw=black!50, thick},
+  v2f/.style={{Bar[width=1.5mm]}-,shorten <= 0.75pt,draw=black!50, thick},
+  f2v/.style={->,shorten >= 0.75pt,draw=black!50, thick},
+  v2v/.style={{Bar[width=1.5mm]}->,shorten <= 0.75pt,shorten >= 0.5pt,draw=black!50, thick},
+%
+%
+  df2f/.style={draw=black, thick},
+  dv2f/.style={{Bar[width=1.5mm]}-,shorten <= 0.75pt,draw=black, thick},
+  df2v/.style={->,shorten >= 0.75pt,draw=black, thick},
+  dv2v/.style={{Bar[width=1.5mm]}->,shorten <= 0.75pt,shorten >= 0.5pt,draw=black, thick},
+%
+  differential/.style    ={ font=\small, rectangle, draw=black!50,               thick,
+                     inner sep=3pt, inner xsep=2pt, minimum size=10pt, minimum height=20pt, fill=yellow!80 },
+  dflow/.style={->,shorten <= 1pt,shorten >= 1pt, draw=black, thick}
+}
+
+\newcommand{\nophone}{
+\begin{tikzpicture}
+
+\draw[fill=black] (0, 0) to (0, 7) to [out=6,in=174] (4, 7) to (4, 0) to [out=186,in=354] (0, 0);
+
+\draw[fill=white] (0.2, 0.75) rectangle (3.8, 6.35);
+\draw[fill=white] (2, 0.27) circle (0.2);
+\draw[fill=white] (1, 6.7) circle (0.1);
+
+\draw[line width=33pt,color=white] (2, 3.5) circle (5cm);
+\draw[line width=33pt,color=white] (2, 3.5) ++(-3.3, -3.3) -- ++(6.6, 6.6);
+\draw[line width=23pt,color=red] (2, 3.5) circle (5cm);
+\draw[line width=23pt,color=red] (2, 3.5) ++(-3.3, -3.3) -- ++(6.6, 6.6);
+
+\end{tikzpicture}
+}
