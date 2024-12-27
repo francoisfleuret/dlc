@@ -1,0 +1,1061 @@
+% -*- mode: latex; mode: reftex; mode: auto-fill; mode: flyspell; mode: yas/minor; coding: utf-8; tex-command: "pdflatex.sh" -*-
+
+%% \PassOptionsToClass{handout}{beamer}
+
+\documentclass[c,8pt]{beamer}
+
+\input{includes/dlc-header-beamer}
+
+% SUMMARY: From artificial neural networks to deep learning
+
+\begin{document}
+
+\def\dlcdecktitle{From neural networks to deep learning}
+\def\dlclecturenumber{1}
+\def\dlcdecknumber{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\openingframe
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \sectiontitleframe{Why learning}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame} %% frame 1 / 53
+
+%% \vspace*{5em}
+
+Many applications require the automatic extraction of ``refined''
+information from raw signal ({e.g.} image recognition, automatic
+speech processing, natural language processing, robotic control,
+geometry reconstruction).
+
+%% \vspace*{-2mm}
+
+\begin{center}
+\includegraphics[height=2.25cm]{pics/imagenet-armchairs/armchairs/171272865_de284ebca6.jpg}
+\hspace*{0pt}
+\includegraphics[height=2.25cm]{pics/imagenet-armchairs/armchairs/2244045079_ce65f3f106.jpg}
+
+\vspace*{-8pt}
+
+\includegraphics[height=2.25cm]{pics/imagenet-armchairs/armchairs/2463497210_482f74f2bf.jpg}
+\hspace*{0pt}
+\includegraphics[height=2.25cm]{pics/imagenet-armchairs/armchairs/2114986996_7805c2b63c.jpg}
+\hspace*{0pt}
+\includegraphics[height=2.25cm]{pics/imagenet-armchairs/armchairs/78510919_04a458def8.jpg}
+
+\acksource{(ImageNet)}
+
+\end{center}
+
+%--------------------------------------------------
+
+\note[2]{
+
+  The core idea of machine learning is to write algorithms that depend
+  on parameters whose values are let unspecified, and optimized to
+  work on examples.
+
+  When the number of parameters is very large and the type of
+  computation carefully chosen, these methods can ``discover'' rich
+  and complex processings that would have been impossible to
+  handcraft.
+
+  % \vspace*{1em}
+
+  Although there are multiple forms of machine-learning models, most
+  of them take as input a real world signal and output a refined
+  information: semantic content (object classification), location of
+  object (detection), word present in a audio signal (keyword
+  spotting), meaning in a sentence (sentiment analysis). Some
+  algorithms even take as input a random input to synthesis a
+  structured signal: image, sound or text.
+
+  %Why do we need machine learning in general ?
+
+  %% At a more abstract level, it consists of building models from a
+  %% finite set of samples, by capturing the statistical regularities of
+  %% the world, with a view to making predictions on unseen data, or
+  %% generating new signals.
+
+  % \vspace*{1em}
+
+  %% \begin{itemize}
+  %% \item Image classification, object detection, image segmentation
+  %% \item Sequence classification: sentiment analysis, activity/action
+  %% recognition, DNA sequence classification, action selection.
+  %% \item Sequence synthesis: text synthesis, music synthesis, motion synthesis.
+  %% \item Sequence-to-sequence translation: speech recognition, text
+  %% translation, part-of-speech tagging.
+  %% \end{itemize}
+
+  % \vspace*{1em}
+
+  The task of automatically extracting the information of interest is
+  difficult because of the large variability of the input signal for a
+  given task.
+
+  Despite being obvious to the human eye that all the above images
+  depict armchairs, it would be very difficult to come up with a
+  hand-crafted algorithmic recipe taking as input the image pixels and
+  predicting they represent an armchair.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t] %% frame 2 / 53
+
+\vspace*{2cm}
+
+\mode<beamer>{
+
+\only<1-2>{
+%
+Our brain is so good at interpreting visual information that the
+``semantic gap'' is hard to assess intuitively.
+}
+
+\only<2>{
+%
+\vspace*{-1cm}
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[draw=none] (-2.5, -2.5) -- (2.5, -2.5) -- (2.5, 2.5) -- (-2.5, 2.5) -- (-2.5 , -2.5);
+  \node[inner sep=0pt] (img) at (0.0, 0.0)
+       {\raisebox{0.5em}{This:}
+         \ \ \ \includegraphics[height=0.6cm]{pics/cifar10/cifar_43.png} \ \ \ \ \raisebox{0.5em}{is a horse}};
+\end{tikzpicture}
+\end{center}
+}
+
+\only<3>{
+\begin{center}
+\begin{tikzpicture}
+  \draw[draw=none] (-2.5, -2.5) -- (2.5, -2.5) -- (2.5, 2.5) -- (-2.5, 2.5) -- (-2.5 , -2.5);
+  \node[inner sep=0pt,draw=white,thick] (img) at (0.0, 0.0)
+       {\includegraphics[height=4cm]{pics/cifar10/cifar_43.png}};
+\end{tikzpicture}
+\end{center}
+}
+
+\only<4>{
+\begin{center}
+\begin{tikzpicture}
+  \draw[draw=none] (-2.5, -2.5) -- (2.5, -2.5) -- (2.5, 2.5) -- (-2.5, 2.5) -- (-2.5 , -2.5);
+  \node[inner sep=0pt,draw=white,thick] (imgB) at (0.25,  0.25)
+       {\includegraphics[height=4cm]{pics/cifar10/cifar_43_B.png}};
+  \node[inner sep=0pt,draw=white,thick] (imgG) at (0.0,  0.0)
+       {\includegraphics[height=4cm]{pics/cifar10/cifar_43_G.png}};
+  \node[inner sep=0pt,draw=white,thick] (imgR) at (-0.25, -0.25)
+       {\includegraphics[height=4cm]{pics/cifar10/cifar_43_R.png}};
+\end{tikzpicture}
+\end{center}
+}
+}
+
+\mode<handout>{
+
+\vspace*{-1em}
+
+Our brain\index{brain} is so good at interpreting visual information
+that the ``semantic gap''\index{semantic gap} is hard to assess
+intuitively.
+
+\vspace*{-1em}
+
+\begin{center}
+
+    \hspace*{\stretch{1}}
+    %
+    \begin{tikzpicture}[scale=0.5]
+      \draw[draw=none] (-2.5, -2.5) -- (2.5, -2.5) -- (2.5, 2.5) -- (-2.5, 2.5) -- (-2.5 , -2.5);
+      \node[inner sep=0pt] (img) at (0.0, 0.0)
+           {\raisebox{0.5em}{This} \ \includegraphics[height=0.6cm]{pics/cifar10/cifar_43.png} \ \ \raisebox{0.5em}{is a horse}};
+    \end{tikzpicture}
+    %
+    \hspace*{\stretch{1}}
+    %
+    \begin{tikzpicture}[scale=0.5]
+      \draw[draw=none] (-2.5, -2.5) -- (2.5, -2.5) -- (2.5, 2.5) -- (-2.5, 2.5) -- (-2.5 , -2.5);
+      \node[inner sep=0pt] (img) at (0.0, 0.0)
+           {\includegraphics[height=2cm]{pics/cifar10/cifar_43.png}};
+    \end{tikzpicture}
+    %
+    \hspace*{\stretch{1}}
+
+    \vspace*{-4em}
+
+    \begin{tikzpicture}
+      \draw[draw=none] (-2.5, -2.5) -- (2.5, -2.5) -- (2.5, 2.5) -- (-2.5, 2.5) -- (-2.5 , -2.5);
+      \node[inner sep=0pt] (imgB) at (0.25,  0.25)
+           {\includegraphics[height=2cm]{pics/cifar10/cifar_43_B.png}};
+      \node[inner sep=0pt] (imgG) at (0.0,  0.0)
+           {\includegraphics[height=2cm]{pics/cifar10/cifar_43_G.png}};
+      \node[inner sep=0pt] (imgR) at (-0.25, -0.25)
+           {\includegraphics[height=2cm]{pics/cifar10/cifar_43_R.png}};
+    \end{tikzpicture}
+
+
+\end{center}
+
+}
+
+
+%--------------------------------------------------
+
+\note[0]{
+
+  When discussing the subject with people who are not from the field,
+  it is intriguing to them that there is so much effort in making
+  computers do what humans do so easily. Very often people do not
+  realize that the problem actually exists.
+
+  % \vspace*{1em}
+
+  The semantic gap is the difference there exists between a raw signal
+  and its semantic content. For instance, two images can be very
+  different in terms of pixel values, although depicting the same
+  object. While it is even hard to be aware of the processing
+  happening in our visual cortex when we look at an image such as the
+  small vignette of a horse above, the larger pixelated image is
+  slightly more difficult to parse since edges along the animal are
+  not apparent anymore, while artificial pixel edges are. When the
+  image is split into its three color component red/green/blue, that
+  correspond to the representation in memory, our visual system has
+  greater difficulty to understand the signal.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+
+\begin{comment}
+from torchvision.datasets import CIFAR10
+cifar = CIFAR10('./data/cifar10/', train=True, download=True)
+x = torch.from_numpy(cifar.data)[43].permute(2, 0, 1)
+x[:, :4, :8]
+\end{comment}
+
+\begin{rawsrc}
+>>> from torchvision.datasets import CIFAR10
+>>> cifar = CIFAR10('./data/cifar10/', train=True, download=True)
+Files already downloaded and verified
+>>> x = torch.from_numpy(cifar.data)[43].permute(2, 0, 1)
+>>> x[:, :4, :8]
+tensor([[[ 99,  98, 100, 103, 105, 107, 108, 110],
+         [100, 100, 102, 105, 107, 109, 110, 112],
+         [104, 104, 106, 109, 111, 112, 114, 116],
+         [109, 109, 111, 113, 116, 117, 118, 120]],
+
+        [[166, 165, 167, 169, 171, 172, 173, 175],
+         [166, 164, 167, 169, 169, 171, 172, 174],
+         [169, 167, 170, 171, 171, 173, 174, 176],
+         [170, 169, 172, 173, 175, 176, 177, 178]],
+
+        [[198, 196, 199, 200, 200, 202, 203, 204],
+         [195, 194, 197, 197, 197, 199, 200, 201],
+         [197, 195, 198, 198, 198, 199, 201, 202],
+         [197, 196, 199, 198, 198, 199, 200, 201]]], dtype=torch.uint8)
+\end{rawsrc}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  In the memory of the computer, images are stored as tensors, which
+  are multi-dimensional data structures storing the pixel values.
+
+  Tensors are truly what algorithms have access to operate on and
+  solve the task they are trained for.
+
+  So an ``image recognition'' algorithms should predict that there is
+  a horse in the input image from this table of integers.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame} %% frame 4 / 53
+
+Extracting semantic\index{semantic} automatically requires models of
+extreme complexity, which cannot be designed by hand.
+
+Techniques used in practice consist of
+\begin{enumerate}
+\item defining a parametric model\index{parametric model}, and
+\item optimizing\index{optimization} its parameters by ``making it
+work'' on training data.
+\end{enumerate}
+
+\pause
+
+This is similar to biological\index{biology} systems for which the
+model ({e.g.} brain structure\index{brain}) is DNA-encoded, and
+parameters ({e.g.} synaptic weights\index{synaptic weights}) are
+tuned through experiences.
+
+\pause
+
+%% \vspace*{\stretch{1}}
+
+Deep learning encompasses software technologies to scale-up to
+billions of model parameters and as many training examples.
+
+%--------------------------------------------------
+
+\note[0]{%
+  %
+  In some very controlled environments such as in an automatic factory
+  assembly line, it may sometimes be possible to design models by
+  hand, but in most real-world vision problems images are prone to
+  many variations due to illumination, geometric pose, occlusion,
+  texture, articulated bodies, {etc.} which makes it impossible to
+  design a model by hand to extract their semantic content.
+
+  The standard way of addressing the task of extracting a ``refined''
+  information from a high dimensional input signal consists of
+  designing an algorithm with a lot of free parameters, that is known,
+  for theoretical reasons, or by experience to compute the proper
+  responses for adequate values of the parameters. These values are
+  then optimized by a procedure on available training examples.
+
+  This process of designing a system whose parameters are changed to
+  make it better at a task shares similarities with biological nervous
+  systems, whose structure is fixed (DNA-encoded), but whose
+  processing is modulated by quantities (synaptic weights) that are
+  tuned through experiences.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 5 / 53
+
+There are strong connections between standard statistical modeling and
+machine learning.
+
+\pause
+
+Classical ML\index{shallow learning} methods combine a ``learnable''
+model from statistics ({e.g.} ``linear regression''\index{linear
+  regression}) with prior knowledge in pre-processing.
+
+\pause
+
+``Artificial neural networks'' pre-dated these approaches, and do not
+follow this dichotomy. They consist of ``deep'' stacks of
+parametrized processing.
+
+%--------------------------------------------------
+
+\note[2]{
+
+  Most of standard statistical methods ({e.g.} logistic
+  regression, linear regression) do not allow to deal with signals of
+  very high dimensions such as images.
+
+  Therefore, we usually combine them with a hand designed
+  pre-processing step which extracts a small number of meaningful
+  quantities from the raw signal. Hopefully, this pre-processing step
+  retains all the information content useful to make the prediction.
+
+  Classical machine learning methods follow this dichotomy of
+  %
+  \begin{itemize}
+
+  \item first, processing the signal to extract features in a ad-hoc
+    manner,
+
+  \item second, feeding these features to a statistical processing
+    that makes a prediction, and can be tuned to work on training
+    examples.
+
+  \end{itemize}
+  %
+  as opposed to artificial neural networks, which are series of
+  parametrized processing units, each of them extracting meaningful
+  values and making predictions at the same time.
+
+  The term ``deep'' in ``deep learning'' refers to the fact that many
+  of these modules are stacked together.
+
+}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\sectiontitleframe{From artificial neural networks to ``Deep Learning''}
+
+%% https://en.wikibooks.org/wiki/Artificial_Neural_Networks/History
+
+%% In 1949, Donald Hebb published The Organization of Behavior, which
+%% outlined a law for synaptic neuron learning. This law, later known as
+%% Hebbian Learning in honor of Donald Hebb is one of the simplest and
+%% most straight-forward learning rules for artificial neural networks.
+
+%% In 1951, Marvin Minsky created the first ANN while working at
+%% Princeton.
+
+%% In 1958 The Computer and the Brain was published posthumously, a year
+%% after John von Neumann’s death. In that book, von Neumann proposed
+%% many radical changes to the way in which researchers had been modeling
+%% the brain.
+
+%% The Mark I Perceptron was also created in 1958, at Cornell University
+%% by Frank Rosenblatt. The Perceptron was an attempt to use neural
+%% network techniques for character recognition. The Mark I Perceptron
+%% was a linear system, and was useful for solving problems where the
+%% input classes were linearly separable in the input space. In 1960,
+%% Rosenblatt published the book Principles of Neurodynamics, containing
+%% much of his research and ideas about modeling the brain.
+
+%% The backpropagation algorithm, originally discovered by Werbos in 1974
+%% was rediscovered in 1986 with the book Learning Internal
+%% Representation by Error Propagation by Rumelhart, Hinton and
+%% Williams. Backpropagation is a form of the gradient descent algorithm
+%% used with artificial neural networks for minimization and
+%% curve-fitting.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 6 / 53
+
+\begin{center}
+
+Networks of ``Threshold Logic Unit''
+
+\includegraphics[clip,trim=60 73 60 95,scale=0.30] {excerpts/mcculloch_pitts_1943_page_16.pdf}
+
+\acksource{\citep{McCulloch1943}}
+
+\end{center}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  We can trace back the origins of neural networks to
+  \cite{McCulloch1943} who proposed to model the nervous system as a
+  network of ``threshold logic units.'' They suggested that one can
+  put all the intelligence in the connections: elementary units doing
+  very simple computation can perform an arbitrary mathematical
+  function by being combined in an appropriate manner.
+
+  This opened the way to the notion that one can have a class of
+  processing methods which are parameterized through the connections
+  between units.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 7 / 53
+
+%% \includegraphics[clip,trim=25 220 40 66,scale=0.25] {./excerpts/hubel_wiesel_1962_p26.pdf} \\[1em]
+
+%% \acksource{\citep{hubel1962receptive}}
+
+\vspace*{-4ex}
+
+\begin{center}
+\includegraphics[height=3.5cm]{pics/Rosenblatt_Mark_I_perceptron_1956.jpg}
+
+Frank Rosenblatt working on the Mark I perceptron (1956)
+\end{center}
+
+\vspace*{2ex}
+
+\begin{itemize}
+\item<1->[1949 --] Donald Hebb proposes the Hebbian Learning principle
+  \citep{hebb-organization-of-behavior-1949}.
+\item<1->[1951 --] Marvin Minsky creates the first ANN (Hebbian learning, 40 neurons).
+\item<2->[1958 --] Frank Rosenblatt creates a perceptron to classify $20 \times 20$
+  images.
+\item<3->[1959 --] David H. Hubel and Torsten Wiesel demonstrate
+  orientation selectivity and columnar organization in the cat's
+  visual cortex \citep{hubel1962receptive}.
+%% \item[1974 --] Paul Werbos proposes the back-propagation.
+\item<4->[1982 --] Paul Werbos proposes back-propagation for ANNs \citep{Werbos1981}.
+\end{itemize}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  The Hebbian Learning principle is a simple rule that allows to learn
+  patterns and decision rules by reinforcing the connections between
+  neurons when they tend to activate simultaneously. Although
+  biologically plausible it is not used nowadays in machine learning.
+
+  A perceptron is the simplest form of neural network, composed of a
+  single neuron.
+
+  Hubel and Wiesel's studies of the visual cortex of a cat showed that
+  the visual information goes through a series of several processing
+  steps: edge detections, combination of edges, detection of motion of
+  edges, {etc.} These results built a strong bridge between the neural
+  processing and the mathematical world, in particular signal
+  processing.
+
+  The key component of deep learning is the back-propagation algorithm
+  which was proposed by Werbos. Back-propagation is used to train
+  neural networks and is a straight-forward application of the chain
+  rule from differential calculus.
+
+}
+
+\end{frame}
+
+%% In a 1958 press conference organized by the US Navy, Rosenblatt made
+%% statements about the perceptron that caused a heated controversy among
+%% the fledgling AI community; based on Rosenblatt's statements, The New
+%% York Times reported the perceptron to be "the embryo of an electronic
+%% computer that [the Navy] expects will be able to walk, talk, see,
+%% write, reproduce itself and be conscious of its existence."
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 8 / 53
+
+\label{thumbnail-slide}
+
+\begin{center}
+
+Neocognitron\index{neocognitron}
+
+\includegraphics[clip,trim=50 405 220 175,scale=0.7] {excerpts/fukushima_1980_page_3.pdf}
+
+\acksource{\citep{Fukushima1980Neocognitron}}
+
+This model follows Hubel and Wiesel's results.
+
+\end{center}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  \cite{Fukushima1980Neocognitron} implemented the results of Hubel
+  and Wiesel in a model called the Neocognitron. It was used for
+  handwritten character recognition and can be viewed as the precursor
+  of modern convolution networks.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 9 / 53
+
+\begin{center}
+
+Network for the T-C problem
+
+\hspace*{1cm}\includegraphics[clip,trim=160 335 210 110,scale=0.5] {excerpts/rumelhart_et_al_1986_page_32.pdf}
+
+Trained with back-prop.
+
+\acksource{\citep{Rumelhart1986book}}
+\end{center}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  \cite{Rumelhart1986book} used back-propagation to train a network
+  similar to the Neocognitron, and showed that the so-called
+  ``hidden'' units, which are neither input nor output neurons, learn
+  meaningful representation of the data.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{}
+
+\begin{center}
+
+LeNet family\index{LeNet}
+
+%% \vspace*{5mm}
+
+%% \fbox{
+\includegraphics[clip,trim=240 425 50 80,scale=0.65] {excerpts/lecun89_08.pdf}
+%% }
+
+\vspace*{-5mm}
+
+\acksource{\citep{lecun1989}}
+
+\end{center}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  \cite{lecun1989} proposed a convolution neural network (CNN, or
+  ``convnet'') very similar to modern architectures used nowadays.
+
+  As we shall see later on, a convnet is a series of ``layers'' which
+  compute at every location of their input matching scores with small
+  templates, and propagate the said matching scores to the next
+  layer. These templates are optimized with variants of the
+  back-propagation algorithm.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \begin{frame}{}{} %% frame 10 / 53
+
+%% \begin{center}
+
+%% LeNet-5
+
+%% \vspace*{5mm}
+
+%% \includegraphics[clip,trim=40 590 40 50,scale=0.575] {excerpts/lecun1998_page_7.pdf}
+
+%% \acksource{\citep{lecun1998}}
+
+%% \end{center}
+
+%% \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 17 / 53
+
+ImageNet\index{ImageNet} Large Scale Visual Recognition
+Challenge\index{ILSVRC}.
+
+%% \acksource{\citep{ILSVRC15}}
+
+\vspace*{-1em}
+
+\begin{center}
+
+Started 2010, 1 million images, 1000 categories
+
+\vspace*{-2ex}
+
+\mode<beamer>{
+
+%% \only<+>{\includegraphics[scale=0.25]{pics/imagenet2012/imagenet2012_starfish.png}}
+
+%% \only<+>{\includegraphics[scale=0.25]{pics/imagenet2012/imagenet2012_angora-rabbit.png}}
+
+%% \only<+>{\includegraphics[scale=0.25]{pics/imagenet2012/imagenet2012_hippopotamus.png}}
+
+%% \only<+>{\includegraphics[scale=0.25]{pics/imagenet2012/imagenet2012_water-buffalo.png}}
+
+\only<+>{\includegraphics[scale=0.25]{pics/imagenet2012/imagenet2012_hatchet.png}}
+
+}
+
+\mode<handout>{
+
+\hspace*{\stretch{1}}
+%
+\includegraphics[scale=0.1]{pics/imagenet2012/imagenet2012_starfish.png}
+%
+\hspace*{\stretch{1}}
+%
+\includegraphics[scale=0.1]{pics/imagenet2012/imagenet2012_angora-rabbit.png}
+%
+\hspace*{\stretch{1}}
+
+%
+%\includegraphics[scale=0.1]{pics/imagenet2012/imagenet2012_hippopotamus.png}
+
+\hspace*{\stretch{1}}
+%
+\includegraphics[scale=0.1]{pics/imagenet2012/imagenet2012_water-buffalo.png}
+%
+\hspace*{\stretch{1}}
+%
+\includegraphics[scale=0.1]{pics/imagenet2012/imagenet2012_hatchet.png}
+%
+\hspace*{\stretch{1}}
+
+}
+
+\end{center}
+
+\vspace*{-1em}
+
+\acksource{(http://image-net.org/challenges/LSVRC/2014/browse-synsets)}
+
+%--------------------------------------------------
+
+\note[2]{
+
+  The availability of large amount of training data is critical to the
+  success of deep-learning methods. ImageNet was started precisely to
+  fullfill the need of machine learning, and the subset used to
+  benchmark models is composed of more than a million of images
+  organized in 1000 categories as diverse as ``angora rabbit'',
+  ``German shepherd'', ``acoustic guitar'', or ``school bus''.
+
+  ImageNet was key in the development of deep learning because it
+  is of the size required to train deep architectures.
+
+  Most image classification models are trained on this dataset, which
+  is split in three parts: the training set, the validation (or dev)
+  set, and the test set. The overall goal is to train a model on the
+  training data, tune the hyper-parameters on the validation set, and
+  finally evaluate the performance of the final model on the test set.
+
+  The testing part consists in:
+  %
+  \begin{itemize}
+  \item applying the model on each test image: the model returns a
+  value between 0 and 999, corresponding to the class the model
+  believes the image belongs to;
+  \item then counting how many times the prediction of the model is
+  right.
+  \end{itemize}
+
+  There are variants as well, such as the top-5 error rate, which is
+  considering the prediction correct if the correct class is among the
+  5 first classes predicted by the network.
+
+  It is also common practice for many computer vision tasks, to start
+  from a network that was trained on ImageNet, and to refine its
+  training on another task and/or extend it.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 11 / 53
+
+\begin{center}
+
+AlexNet\index{AlexNet}
+
+\vspace*{5mm}
+
+\includegraphics[clip,trim=100 580 100 80,scale=0.7] {excerpts/krizhevsky_2012_page_5.pdf}
+
+\vspace*{-0.25cm}
+
+\acksource{\citep{alexnet2012}}
+
+\end{center}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  Following some earlier work from \cite{ciresan2011}, the work of
+  \cite{alexnet2012} showed that a network very similar to a LeNet5,
+  but of far greater size, implemented on a graphical card could beat
+  by a large margin state-of-the-art image classification methods on
+  what was the reference benchmark of the community.
+
+  This work opened the way of training bigger networks on GPUs and
+  started a new era of artificial neural networks.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{}
+
+%% \vspace*{3ex}
+
+\begin{center}
+
+Top-5 error rate on ImageNet
+
+%ff% \includegraphics[height=7.5cm]{pics/performance_imagenet_2010_2017.png}
+\includegraphics[height=7cm]{materials/imagenet/pics/slides/imagenet.pdf}
+%oc% \scalebox{0.65}{\input{materials/imagenet/pics/slides/imagenet.pgf}}
+
+\index{ImageNet}\index{ILSVRC}
+
+\end{center}
+
+\vspace*{-4ex}
+
+\acksource{\citep{gershgorn2017}}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  Each gray dot on this graph shows the error rate of a model. The red
+  line indicates the state-of-the-art performance each year, and the
+  blue line shows the performance of humans asked to make the
+  prediction, which can be seen as a gold standard.
+
+  A model may outperform humans if it picks statistical regularities
+  that humans do not perceive, probably because of a bias in the data
+  set.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 12 / 53
+
+\begin{tabular}{cp{1cm}c}
+\includegraphics[clip,trim=230 80 220 80,scale=0.3]{excerpts/szegedy_2014_page_7.pdf}
+&&
+\includegraphics[clip,trim=210 180 320 90,scale=0.35]{excerpts/he_resnet_2015_page_4.pdf}
+\\
+\acksource{GoogleNet \citep{inception2015}}
+&&\acksource{ResNet \citep{he2015resnet}}
+\end{tabular}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  Alexnet initiated a trend toward more complex and bigger
+  architectures.
+
+  GoogLeNet \citep{inception2015} contains several ``inception''
+  modules in a kind of fractal structure.
+
+
+  Residual networks \citep{he2015resnet} allow very deep networks
+  thanks to ``passthrough'' connections which add the input of a layer
+  to its output, and facilitate the training.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 13 / 53
+
+\makebox[\textwidth][c]{
+%% \fbox
+{\includegraphics[scale=0.65,trim=190 390 190 70,clip]{excerpts/Vaswani_et_al_2017_3.pdf}}
+}
+
+\vspace*{-4ex}
+
+\acksource{\citep{arxiv-1706.03762}}
+
+%--------------------------------------------------
+
+\note[0]{
+
+The Transformers are a class of deep architectures using
+attention-based computation, very popular for Natural
+Language Processing \citep{arxiv-1706.03762}.
+
+Some of these models for language modeling are of extremely large
+size, {e.g.} GPT-3 having 175 billion parameters
+\citep{arxiv-2005.14165}.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{} %% frame 14 / 53
+
+Deep learning is built on a natural generalization of a neural
+network: \textbf{a graph of tensor operators}, taking advantage of
+\begin{itemize}
+\item the chain rule\index{chain rule} (aka
+``back-propagation''\index{back-propagation}),
+\item stochastic gradient decent\index{stochastic gradient descent},
+\item convolutions,
+\item parallel operations on GPUs.\index{GPU}
+\end{itemize}
+
+This does not differ much from networks from the 90s.
+
+%--------------------------------------------------
+
+\note[2]{
+
+  As we will see later in the course, an artificial neural network is
+  a series of layers of neurons, each neuron connected to several
+  neurons in the previous layer and sending activations to neurons
+  that follow in the network.
+
+  Deep learning is ``simply'' a natural generalization of artificial
+  neural networks by viewing the activities of a group of neurons as a
+  multidimensional matrix, called a tensor.
+
+  A ``deep model'' can be formalized as a graph of tensor operators in
+  which
+  %
+  \begin{itemize}
+  \item the nodes of the graph are operations,
+  \item the results of the operation are propagated along the edges of
+    the graph, until it reaches the output node.
+  \end{itemize}
+
+  The four main elements of a the deep learning technology are:
+  %
+  \begin{itemize}
+
+  \item the back-propagation which allows to compute how the quantity
+    to optimize will change when changing slightly the model
+    parameters. This directly comes from the chain rule from
+    differential calculus;
+
+  \item the stochastic gradient descent algorithm, which is a recipe
+    to iteratively update the parameters of the network, until it
+    fulfills its tasks;
+
+  \item the convolutions, which leverage the fact that the signal is
+    structured, and often has some stationarity
+    properties. Convolutions allow the processing of large signals
+    such as image, videos, or chunks of text. In an image for
+    instance, it makes sense to use the same filter detecting an edge
+    everywhere;
+
+  \item the parallelization of operations to take advantage of highly
+    efficient computing hardware (GPUs/TPUs).
+
+  \end{itemize}
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{}{}
+
+This generalization allows to design complex networks of operators
+dealing with images, sound, text, sequences, {etc.} and to train them
+end-to-end.
+
+%% \includegraphics[width=10cm]{pics/Yeung_et_al_-_End-to-end_Learning_of_Action_Detection_from_Frame_Glimpses_in_Videos_2015_Network-figure.png}
+
+%% \acksource{\citep{arxiv-1511.06984}}
+
+%% \fbox{%
+\includegraphics[width=10cm]{pics/Tran_et_al_-_Transform_and_Tell_Entity-Aware_News_Image_Captioning_CVPR_2020_03.png}
+%% }
+
+\acksource{\citep{Tran_2020_CVPR}}
+
+%--------------------------------------------------
+
+\note[0]{
+
+  The paradigm of graph of operators allows to design architectures at
+  a new level, where submodules themselves perform very complicated
+  operations.
+
+  The work of \cite{Tran_2020_CVPR} aims at doing auto captioning from
+  images, which is given an input image should produce a piece of text
+  describing the content of it. The architecture they devised
+  illustrates the modularity of complex deep models, and embeds for
+  instance a full ResNet152 as a sub-processing for the image part.
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \begin{frame}{}{} %% frame 18 / 53
+
+%% \vspace*{-0.5cm}
+
+%% %% \fbox{
+%% \begin{center}
+%% \includegraphics[clip,trim=50 245 320 250,height=7.5cm]{excerpts/he_resnet_2015_page_6.pdf}
+%% \end{center}
+%% %% }
+
+%% \vspace*{-0.5cm}
+
+%% \acksource{\citep{he2015resnet}}
+
+%% \end{frame}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \begin{frame}{}{} %% frame 24 / 46
+
+%% \begin{center}
+%% MS-COCO
+
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas1_image.jpg}
+%% \hspace*{0.1cm}
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas2_image.jpg}
+%% \hspace*{0.1cm}
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas5_image.jpg}
+
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas3_image.jpg}
+%% \hspace*{0.1cm}
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas4_image.jpg}
+%% \end{center}
+
+%% \end{frame}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \begin{frame}{}{} %% frame 25 / 46
+
+%% \begin{center}
+%% MS-COCO
+
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas1.png}
+%% \hspace*{0.1cm}
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas2.png}
+%% \hspace*{0.1cm}
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas5.png}
+
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas3.png}
+%% \hspace*{0.1cm}
+%% \includegraphics[height=2.3cm]{pics/mscoco/canvas4.png}
+%% \end{center}
+
+%% \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\closingframe
+
+\bibliographyframe
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\checknbdrafts
+
+\end{document}
